@@ -1,0 +1,40 @@
+seed: 42
+task_type: qa
+
+model_type: t5
+# model_name_or_path: t5-small
+
+do_train: True
+do_predict: True
+
+num_train_epochs: 15
+max_seq_length: 320
+max_output_length: 2
+dataloader_num_workers: 2
+
+generation_max_length: 2
+generation_num_beams: 4
+predict_with_generate: True 
+ignore_pad_token_for_loss: True 
+
+per_device_train_batch_size: 4
+per_device_eval_batch_size: 4 
+gradient_accumulation_steps: 4
+learning_rate: 5.0e-5
+weight_decay: 1.0e-5
+warmup_ratio: 0.1 
+max_grad_norm: 1
+optim: adamw_torch
+
+load_best_model_at_end: True
+metric_for_best_model: accuracy 
+greater_is_better: True 
+
+logging_strategy: steps
+logging_steps: 100
+evaluation_strategy: epoch
+eval_steps: 500
+save_strategy: epoch
+save_steps: 500
+
+

@@ -1,0 +1,22 @@
+{
+    "ood-FT_test_loss": 0.5977594256401062,
+    "ood-FT": 53.20945945945946,
+    "ood-FT_test_runtime": 31.3635,
+    "ood-FT_test_samples_per_second": 75.502,
+    "ood-FT_test_steps_per_second": 18.875,
+    "ood-LP_test_loss": 0.8261964917182922,
+    "ood-LP": 25.506756756756754,
+    "ood-LP_test_runtime": 30.7505,
+    "ood-LP_test_samples_per_second": 77.007,
+    "ood-LP_test_steps_per_second": 19.252,
+    "iid-FT_test_loss": 0.4696889817714691,
+    "iid-FT": 66.38513513513513,
+    "iid-FT_test_runtime": 30.0113,
+    "iid-FT_test_samples_per_second": 78.904,
+    "iid-FT_test_steps_per_second": 19.726,
+    "iid-LP_test_loss": 0.8372650146484375,
+    "iid-LP": 33.74155405405405,
+    "iid-LP_test_runtime": 30.484,
+    "iid-LP_test_samples_per_second": 77.68,
+    "iid-LP_test_steps_per_second": 19.42
+}

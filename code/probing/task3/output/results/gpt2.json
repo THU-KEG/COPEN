@@ -1,0 +1,12 @@
+{
+    "all": {
+        "easy_accuracy": 0.0,
+        "hard_accuracy": 31.123310810809496,
+        "all_accuracy": 31.123310810809496
+    },
+    "concept": {
+        "easy_accuracy": 0.0,
+        "hard_accuracy": 32.347972972971604,
+        "all_accuracy": 32.347972972971604
+    }
+}

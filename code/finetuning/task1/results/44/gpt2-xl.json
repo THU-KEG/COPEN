@@ -1,0 +1,12 @@
+{
+    "ood-FT_test_loss": 11.912605285644531,
+    "ood-FT": 25.735482220516758,
+    "ood-FT_test_runtime": 330.1394,
+    "ood-FT_test_samples_per_second": 11.84,
+    "ood-FT_test_steps_per_second": 5.922,
+    "ood-LP_test_loss": 2.97575306892395,
+    "ood-LP": 10.079304169864416,
+    "ood-LP_test_runtime": 328.9956,
+    "ood-LP_test_samples_per_second": 11.882,
+    "ood-LP_test_steps_per_second": 5.942
+}

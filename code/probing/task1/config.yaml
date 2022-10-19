@@ -1,0 +1,9 @@
+task_name: CSJ
+
+test_file: ../../data/task1/data/ood/test.json
+
+per_device_eval_batch_size: 16
+max_seq_length: 120
+max_output_length: 120
+
+post_process_logits: False
