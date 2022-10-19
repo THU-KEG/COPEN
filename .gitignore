@@ -38,8 +38,8 @@ Thumbs.db
 __pycache__
 
 # Data # 
-**/data
-**/data/*.json
+# **/data
+data/**/*.json
 
 # result #
 code/probing/task1/output/*.json
