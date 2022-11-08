@@ -99,7 +99,7 @@ if args.do_predict:
     dump_result(args, model_name_or_path, metrics)
 
     # get submissions to codalab
-    all_data = json.load(open("../../../data/task1/data/ood/test.json"))
+    all_data = json.load(open("../../../data/task1/data/test.json"))
     if isinstance(preds, tuple):
         preds = preds[0]
     decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)

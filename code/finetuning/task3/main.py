@@ -86,7 +86,7 @@ if args.do_predict:
     dump_result(args, model_name_or_path, metrics)
 
     # get submissions to codalab
-    all_data = json.load(open("../../../data/task3/data/ood/test.json"))
+    all_data = json.load(open("../../../data/task3/data/test.json"))
     predictions = []
     for pred, item in zip(preds, all_data):
         predictions.append(item["candidates"][int(np.argmax(pred))])

@@ -113,6 +113,6 @@ if args.do_predict:
             predictions.append(1)
         else:
             predictions.append(0)
-    all_data = json.load(open("../../../data/task2/data/ood/test.json"))
+    all_data = json.load(open("../../../data/task2/data/test.json"))
     save_path = os.path.join(args.output_dir, "cpj_submissions.json")
     get_submissions(all_data, predictions, save_path)

@@ -18,5 +18,8 @@
     "iid-LP": 47.21283783783784,
     "iid-LP_test_runtime": 16.2962,
     "iid-LP_test_samples_per_second": 145.31,
-    "iid-LP_test_steps_per_second": 72.655
+    "iid-LP_test_steps_per_second": 72.655,
+    "FT_test_runtime": 15.4949,
+    "FT_test_samples_per_second": 152.825,
+    "FT_test_steps_per_second": 76.412
 }

@@ -114,5 +114,8 @@
     "iid-LP_test_steps_per_second": 89.647,
     "iid-LP_Precision": 0.6262766945218199,
     "iid-LP_recall": 0.59849157054126,
-    "iid-LP_f1": 0.6120689655172413
+    "iid-LP_f1": 0.6120689655172413,
+    "FT_test_runtime": 1.6172,
+    "FT_test_samples_per_second": 2942.179,
+    "FT_test_steps_per_second": 92.136
 }

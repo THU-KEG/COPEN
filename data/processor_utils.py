@@ -228,22 +228,20 @@ if __name__ == "__main__":
         ["t5", "t5-small"]
     ]
     for model_type in model_types:
-        # for type in ["iid", "ood"]:
-        for type in ["ood"]:
-            for split in ["train", "dev", "test"]:
-                params = {
-                    "task_name": task_name,
-                    "model_type": model_type[0],
-                    "model_name_or_path": model_type[1],
-                    "input_file": os.path.join(os.path.join(os.path.join(task_name, "data"), type), split+".json"),
-                    "output_dir": os.path.join(os.path.join(os.path.join(os.path.join(task_name, "data"), type), task_type), model_type[0]),
-                }
-                if model_type[0] in ["t5"]:
-                    params["output_dir"] = \
-                        os.path.join(os.path.join(os.path.join(os.path.join(task_name, "data"), type), "qa"), model_type[0])
-                params["output_file"] = os.path.join(params["output_dir"], split+".jsonl")
-                args = Namespace(**params)
-                print(args)
-                convert_examples_to_features_for_finetuning(args)
+        for split in ["train", "dev", "test"]:
+            params = {
+                "task_name": task_name,
+                "model_type": model_type[0],
+                "model_name_or_path": model_type[1],
+                "input_file": os.path.join(os.path.join(task_name, "data"), split+".json"),
+                "output_dir": os.path.join(os.path.join(os.path.join(task_name, "data"), task_type), model_type[0]),
+            }
+            if model_type[0] in ["t5"]:
+                params["output_dir"] = \
+                    os.path.join(os.path.join(os.path.join(task_name, "data"), "qa"), model_type[0])
+            params["output_file"] = os.path.join(params["output_dir"], split+".jsonl")
+            args = Namespace(**params)
+            print(args)
+            convert_examples_to_features_for_finetuning(args)
 
 

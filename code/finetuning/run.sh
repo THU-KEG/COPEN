@@ -21,51 +21,27 @@ echo $TASK_TYPE
 echo $SCRIPT
 echo $SEED
 
-# CUDA_VISIBLE_DEVICES=$GPU_ID python $SCRIPT \
-#     --conf_path configs/$CONF_PATH \
-#     --seed $SEED \
-#     --model_type $MODEL_TYPE \
-#     --model_name_or_path $MODEL_NAME_OR_PATH \
-#     --train_file ../../../data/$TASK_NAME/data/iid/$TASK_TYPE/$MODEL_TYPE/train.jsonl \
-#     --validation_file ../../../data/$TASK_NAME/data/iid/$TASK_TYPE/$MODEL_TYPE/dev.jsonl \
-#     --test_file ../../../data/$TASK_NAME/data/iid/$TASK_TYPE/$MODEL_TYPE/test.jsonl \
-#     --output_dir checkpoint/$SEED/full/$MODEL_NAME_OR_PATH-iid \
-#     --early_stopping_patience 5 
-
 CUDA_VISIBLE_DEVICES=$GPU_ID python $SCRIPT \
     --conf_path configs/$CONF_PATH \
     --seed $SEED \
     --model_type $MODEL_TYPE \
     --model_name_or_path $MODEL_NAME_OR_PATH \
-    --train_file ../../../data/$TASK_NAME/data/ood/$TASK_TYPE/$MODEL_TYPE/train.jsonl \
-    --validation_file ../../../data/$TASK_NAME/data/ood/$TASK_TYPE/$MODEL_TYPE/dev.jsonl \
-    --test_file ../../../data/$TASK_NAME/data/ood/$TASK_TYPE/$MODEL_TYPE/test.jsonl \
-    --output_dir checkpoint/$SEED/full/$MODEL_NAME_OR_PATH-ood \
+    --train_file ../../../data/$TASK_NAME/data/$TASK_TYPE/$MODEL_TYPE/train.jsonl \
+    --validation_file ../../../data/$TASK_NAME/data/$TASK_TYPE/$MODEL_TYPE/dev.jsonl \
+    --test_file ../../../data/$TASK_NAME/data/$TASK_TYPE/$MODEL_TYPE/test.jsonl \
+    --output_dir checkpoint/$SEED/full/$MODEL_NAME_OR_PATH \
     --early_stopping_patience 5 
 
-# CUDA_VISIBLE_DEVICES=$GPU_ID python $SCRIPT \
-#     --conf_path configs/$CONF_PATH \
-#     --seed $SEED \
-#     --model_type $MODEL_TYPE \
-#     --model_name_or_path $MODEL_NAME_OR_PATH \
-#     --train_file ../../../data/$TASK_NAME/data/iid/$TASK_TYPE/$MODEL_TYPE/train.jsonl \
-#     --validation_file ../../../data/$TASK_NAME/data/iid/$TASK_TYPE/$MODEL_TYPE/dev.jsonl \
-#     --test_file ../../../data/$TASK_NAME/data/iid/$TASK_TYPE/$MODEL_TYPE/test.jsonl \
-#     --output_dir checkpoint/$SEED/linear/$MODEL_NAME_OR_PATH-iid \
-#     --early_stopping_patience 7 \
-#     --learning_rate 1e-3 \
-#     --num_train_epochs 20 \
-#     --freeze_backbone_parameters 
 
 # CUDA_VISIBLE_DEVICES=$GPU_ID python $SCRIPT \
 #     --conf_path configs/$CONF_PATH \
 #     --seed $SEED \
 #     --model_type $MODEL_TYPE \
 #     --model_name_or_path $MODEL_NAME_OR_PATH \
-#     --train_file ../../../data/$TASK_NAME/data/ood/$TASK_TYPE/$MODEL_TYPE/train.jsonl \
-#     --validation_file ../../../data/$TASK_NAME/data/ood/$TASK_TYPE/$MODEL_TYPE/dev.jsonl \
-#     --test_file ../../../data/$TASK_NAME/data/ood/$TASK_TYPE/$MODEL_TYPE/test.jsonl \
-#     --output_dir checkpoint/$SEED/linear/$MODEL_NAME_OR_PATH-ood \
+#     --train_file ../../../data/$TASK_NAME/data/$TASK_TYPE/$MODEL_TYPE/train.jsonl \
+#     --validation_file ../../../data/$TASK_NAME/data/$TASK_TYPE/$MODEL_TYPE/dev.jsonl \
+#     --test_file ../../../data/$TASK_NAME/data/$TASK_TYPE/$MODEL_TYPE/test.jsonl \
+#     --output_dir checkpoint/$SEED/linear/$MODEL_NAME_OR_PATH \
 #     --early_stopping_patience 7 \
 #     --learning_rate 1e-3 \
 #     --num_train_epochs 20 \

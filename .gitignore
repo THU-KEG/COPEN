@@ -39,8 +39,7 @@ __pycache__
 
 # Data # 
 # **/data
-data/**/*.json
-data/**/ood/*
+data/task*/data/*
 
 # result #
 code/probing/task1/output/*.json

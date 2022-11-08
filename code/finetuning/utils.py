@@ -22,10 +22,10 @@ def dump_result(args, model_name_or_path, metrics):
     checkpoint_dir.mkdir(exist_ok=True, parents=True)
     output_file = os.path.join(checkpoint_dir, model_name_or_path+".json")
     # split type and FT/LP
-    split_type = "ood" if "ood" in args.train_file else "iid"
-    assert split_type in args.train_file
+    # split_type = "ood" if "ood" in args.train_file else "iid"
+    # assert split_type in args.train_file
     tuning_type = "FT" if not args.freeze_backbone_parameters else "LP"
-    result_name = f"{split_type}-{tuning_type}"
+    result_name = f"{tuning_type}"
     # grid search 
     if args.grid_search:
         result_name += f"-{args.num_train_epochs}-{args.learning_rate}-{args.per_device_train_batch_size}-{args.gradient_accumulation_steps}"
