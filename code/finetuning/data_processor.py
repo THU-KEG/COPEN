@@ -50,6 +50,8 @@ class DatasetForSequenceClassification(Dataset):
     def collate_fn(self, batch):
         output_batch = dict()
         for key in batch[0].keys():
+            if key == "labels" and batch[0]["labels"].item() == -1: # test
+                continue
             output_batch[key] = torch.stack([x[key] for x in batch], dim=0)
         input_length = int(output_batch["attention_mask"].sum(-1).max())
         for key in ["input_ids", "attention_mask"]:
@@ -123,6 +125,8 @@ class DatasetForMultipleChoice(Dataset):
     def collate_fn(self, batch):
         output_batch = dict()
         for key in batch[0].keys():
+            if key == "labels" and batch[0]["labels"].item() == -1: # test
+                continue
             output_batch[key] = torch.stack([x[key] for x in batch], dim=0)
         input_length = int(output_batch["attention_mask"].sum(-1).max())
         for key in ["input_ids", "attention_mask"]:
@@ -182,6 +186,8 @@ class DatasetforQuestionAnswering(Dataset):
     def collate_fn(self, batch):
         output_batch = dict()
         for key in batch[0].keys():
+            if key == "labels" and -1 in batch[0]["labels"].tolist(): # test
+                continue
             output_batch[key] = torch.stack([x[key] for x in batch], dim=0)
         input_length = int(output_batch["attention_mask"].sum(-1).max())
         for key in ["input_ids", "attention_mask"]:

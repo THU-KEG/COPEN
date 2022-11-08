@@ -5,6 +5,8 @@ import random
 
 from pathlib import Path 
 import numpy as np 
+from typing import Counter, List, Dict, Tuple 
+from cp_arguments import CPArgs
 
 
 def set_seed(seed):
@@ -49,4 +51,13 @@ def dump_result(args, model_name_or_path, metrics):
             os.system(f"rm -r {ckpt_path}")
 
 
+def get_submissions(all_data, predictions: List[Dict], save_path: CPArgs):
+    assert len(all_data) == len(predictions)
+    submissions = []
+    for pred, item in zip(predictions, all_data):
+        submissions.append({
+            "id": item["id"],
+            "prediction": pred
+        })
+    json.dump(submissions, open(save_path, "w"), indent=4)
 

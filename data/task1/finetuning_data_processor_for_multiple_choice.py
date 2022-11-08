@@ -1,16 +1,4 @@
 
-import enum
-import os
-import pdb 
-import json
-import random 
-
-from pathlib import Path
-from tqdm import tqdm 
-from argparse import Namespace
-
-from transformers import BertTokenizer, RobertaTokenizer, \
-                    GPT2Tokenizer, BartTokenizer, T5Tokenizer
 
 class DataProcessor:
     def __init__(self, tokenizer) -> None:
@@ -20,17 +8,14 @@ class DataProcessor:
         return entity1 + " is conceptually similar with " + entity2 + "."
 
     def convert_example_to_features(self, example):
-        all_candidates = [example["y"]] + example["n"]
-        random.shuffle(all_candidates)
         features = dict()
         features["input"] = []
         features["label"] = -1 
-        for i, candidate in enumerate(all_candidates):
-            if candidate["id"] == example["y"]["id"]:
+        for i, candidate in enumerate(example["candidates"]):
+            if candidate["id"] == example["label"]:
                 features["label"] = i 
             instance = self.add_template(example["query"]["name"], candidate["name"])
             features["input"].append(self.tokenizer.tokenize(instance))
-        assert features["label"] in range(0, len(all_candidates))
         return features
 
     
@@ -88,15 +73,5 @@ class BartProcessor(DataProcessor):
             final_inputs.append(instance)
         features["input"] = final_inputs
         return features
-
-
-class T5Processor(DataProcessor):
-    def __init__(self, tokenizer) -> None:
-        super().__init__(tokenizer)
-        self.tokenizer = tokenizer
-    
-    def convert_example_to_features(self, example):
-        pass
-
 
 

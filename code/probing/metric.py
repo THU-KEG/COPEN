@@ -8,10 +8,11 @@ from typing import Counter, List, Dict, Tuple
 from pathlib import Path
 import logging
 
-from cp_arguments import CPArgumentParser, CPArgs
-from utils import compute_consistency
+from cp_arguments import CPArgs
+
 
 MAXIMUM = 10**20
+
 
 def computeSpanLoss(results: List[Dict], special_tokens: List[str]) -> List[Dict]:
     results_with_span_loss = []
@@ -30,61 +31,7 @@ def computeSpanLoss(results: List[Dict], special_tokens: List[str]) -> List[Dict
         results_with_span_loss.append(item_with_span_loss)
     return results_with_span_loss
 
-
-def computeProbForCiC(mask_position: str, 
-                            results: List[Dict], 
-                            special_tokens: List[str],
-                            data: List[Dict]) -> List[Dict]:
-    if mask_position != "all": 
-        results = computeSpanLoss(results, special_tokens)
-    index = 0
-    for i in range(len(data)):
-        pplOfLabels = []
-        pred = None
-        flag = -MAXIMUM
-        for path in data[i]["label"]:
-            pplOfPath = []
-            for label in path:
-                prob = results[index][mask_position]
-                index += 1
-                pplOfPath.append({"con": label, "prob": prob})
-                if prob > flag:
-                    flag = prob
-                    pred = label
-            pplOfLabels.append(pplOfPath)
-        data[i]["label"] = pplOfLabels
-        data[i]["pred"] = pred 
-    assert index == len(results)
-    return data
-
-
-def computeAcc(all_scored_data: List[Dict], mode="all") -> Tuple[float, int, int]:
-    # compute accuracy
-    crr, tot = 0, 1e-10
-    for item in all_scored_data:
-        if mode != "all" and item["id"] != mode:
-            continue
-        if item["my_label"].split("_")[-1] == item["pred"].split("_")[-1]:
-            crr += 1
-        tot += 1
-    return crr / tot, crr, tot
-
-
-def computeAccuracyForCiC(all_data, results: List[Dict], args: CPArgs, special_tokens: List[str], logger: logging.Logger) -> None:
-    all_scored_data = computeProbForCiC(args.mask_position, results, special_tokens, all_data)
-    output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = f"{args.mask_position}-{args.output_file}"
-    json.dump(all_scored_data, open(os.path.join(output_dir, output_file), "w"), indent=4)
-    logger.info("Easy Accuracy: %.4f, Correct: %d, Total: %d" % (computeAcc(all_scored_data, "easy")))
-    logger.info("Hard Accuracy: %.4f, Correct: %d, Total: %d" % (computeAcc(all_scored_data, "hard")))
-    logger.info("All Accuracy: %.4f, Correct: %d, Total: %d" % (computeAcc(all_scored_data, "all")))
-    return dict(
-        easy_accuracy=computeAcc(all_scored_data, "easy")[0]*100,
-        hard_accuracy=computeAcc(all_scored_data, "hard")[0]*100,
-        all_accuracy=computeAcc(all_scored_data, "all")[0]*100
-    )
-
+# -------------------- Metric for Conceptual Similarity Judgment (CSJ)  --------------------#
 
 def computePerplexityForCSJ(mask_position: str, 
                             results: List[Dict], 
@@ -96,20 +43,13 @@ def computePerplexityForCSJ(mask_position: str,
     for i in range(len(data)):
         pred = None
         flag = -MAXIMUM
-        prob = results[index][mask_position]
-        index += 1
-        data[i]["y"]["prob"] = prob
-        if prob >= flag:
-            flag = prob
-            pred = data[i]["y"]["name"]
-
-        for j in range(len(data[i]["n"])):
+        for j in range(len(data[i]["candidates"])):
             prob = results[index][mask_position]
             index += 1
-            data[i]["n"][j]["prob"] = prob
+            data[i]["candidates"][j]["prob"] = prob
             if prob >= flag:
                 flag = prob
-                pred = data[i]["n"][j]["name"]
+                pred = data[i]["candidates"][j]["name"]
         data[i]["pred"] = pred
     assert index == len(results)
     return data
@@ -129,7 +69,7 @@ def computeMR(preds, label):
         if pred == label:
             pos = 1 / (i+1)
             break 
-    assert pos != -1
+    # assert pos != -1
     return pos 
 
 
@@ -140,30 +80,25 @@ def computeAccuracyForCSJ(all_data, results: List[Dict], args: CPArgs, special_t
     output_file = f"{args.mask_position}-{args.output_file}"
     json.dump(all_scored_data, open(os.path.join(output_dir, output_file), "w"), indent=4)
     # compute accuracy
-    results = dict(
-        hard=dict(total=1e-10, topk=Counter(), mrr=0),
-        easy=dict(total=1e-10, topk=Counter(), mrr=0)
-    )
+    results = dict(total=1e-10, topk=Counter(), mrr=0)
     for item in all_scored_data:
-        item_type = item["id"][:4]
-        results[item_type]["total"] += 1
-        label = item["y"]["name"]
-        preds = []
-        for pred in item["n"]:
-            preds.append(pred)
-        preds.append(item["y"])
+        label = -1
+        for candidate in item["candidates"]:
+            if candidate["id"] == item["label"]:
+                label = candidate["name"]
+        results["total"] += 1
+        preds = item["candidates"]
         for i in range(1, 11):
-            results[item_type]["topk"][f"{i}"] += computeTopk(preds, label, i)
-        results[item_type]["mrr"] += computeMR(preds, label) 
-    # tot = len(all_scored_data)
-    for type in results.keys():
-        results[type]["mrr"] /= results[type]["total"]
-        for k in results[type]["topk"].keys():
-            results[type]["topk"][k] /= results[type]["total"]
-            results[type]["topk"][k] *= 100
+            results["topk"][f"{i}"] += computeTopk(preds, label, i)
+        results["mrr"] += computeMR(preds, label) 
+    results["mrr"] /= results["total"]
+    for k in results["topk"].keys():
+        results["topk"][k] /= results["total"]
+        results["topk"][k] *= 100
     logger.info(results)
     return results
 
+# -------------------- Metric for Conceptual Property Judgment (CPJ)  --------------------#
 
 def computeProbForCPJ(mask_position: CPArgs,
                         results: List[Dict], 
@@ -195,6 +130,57 @@ def computeAccuracyForCPJ(all_data, results: List[Dict], args: CPArgs, special_t
             crr += 1
     logger.info("Accuracy: %.4f, Correct: %d, Total: %d" % (crr/len(all_scored_data), crr, len(all_scored_data)))
     return dict(
-        accuracy=crr/len(all_scored_data)*100,
-        consistency=compute_consistency(all_scored_data)
+        accuracy=crr/len(all_scored_data)*100
+    )
+
+# -------------------- Metric for Conceptualization in Contexts (CiC)  --------------------#
+
+def computeProbForCiC(mask_position: str, 
+                            results: List[Dict], 
+                            special_tokens: List[str],
+                            data: List[Dict]) -> List[Dict]:
+    if mask_position != "all": 
+        results = computeSpanLoss(results, special_tokens)
+    index = 0
+    for i in range(len(data)):
+        pplOfLabels = []
+        pred = None
+        flag = -MAXIMUM
+        for path in data[i]["concept_chains"]:
+            pplOfPath = []
+            for label in path:
+                prob = results[index][mask_position]
+                index += 1
+                pplOfPath.append({"con": label, "prob": prob})
+                if prob > flag:
+                    flag = prob
+                    pred = label
+            pplOfLabels.append(pplOfPath)
+        data[i]["concept_chains"] = pplOfLabels
+        data[i]["pred"] = pred 
+    assert index == len(results)
+    return data
+
+
+def computeAcc(all_scored_data: List[Dict], mode="all") -> Tuple[float, int, int]:
+    crr, tot = 0, 1e-10
+    for item in all_scored_data:
+        if item["label"] != -1:
+            if item["label"].split("_")[-1] == item["pred"].split("_")[-1]:
+                crr += 1
+        else:
+            pass
+        tot += 1
+    return crr / tot, crr, tot
+
+
+def computeAccuracyForCiC(all_data, results: List[Dict], args: CPArgs, special_tokens: List[str], logger: logging.Logger) -> None:
+    all_scored_data = computeProbForCiC(args.mask_position, results, special_tokens, all_data)
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = f"{args.mask_position}-{args.output_file}"
+    json.dump(all_scored_data, open(os.path.join(output_dir, output_file), "w"), indent=4)
+    logger.info("All Accuracy: %.4f, Correct: %d, Total: %d" % (computeAcc(all_scored_data, "all")))
+    return dict(
+        all_accuracy=computeAcc(all_scored_data, "all")[0]*100
     )

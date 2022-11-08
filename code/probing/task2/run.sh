@@ -4,7 +4,7 @@ CUDA_VISIBLE_DEVICES=$1 python main.py \
     --conf_path task2/config.yaml \
     --input_dir ../../data/task2/data/probing/$2/template1 \
     --mask_position all \
-    --output_dir task2/output \
+    --output_dir task2/output-test \
     --recompute 
 
 
@@ -14,7 +14,7 @@ CUDA_VISIBLE_DEVICES=$1 python main.py \
     --conf_path task2/config.yaml \
     --input_dir ../../data/task2/data/probing/$2/template1 \
     --mask_position answer \
-    --output_dir task2/output 
+    --output_dir task2/output-test
 
 
 CUDA_VISIBLE_DEVICES=$1 python main.py \
@@ -23,7 +23,7 @@ CUDA_VISIBLE_DEVICES=$1 python main.py \
     --conf_path task2/config.yaml \
     --input_dir ../../data/task2/data/probing/$2/template1 \
     --mask_position concept \
-    --output_dir task2/output 
+    --output_dir task2/output-test
 
 
 

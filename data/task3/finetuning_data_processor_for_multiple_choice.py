@@ -1,17 +1,4 @@
 
-import enum
-import os
-import pdb 
-import json
-import random 
-
-from pathlib import Path
-from tqdm import tqdm 
-from argparse import Namespace
-
-from transformers import BertTokenizer, RobertaTokenizer, \
-                    GPT2Tokenizer, BartTokenizer, T5Tokenizer
-
 
 def isVowel(token):
     if token[0].lower() in ["a", "e", "i", "o"]:
@@ -29,20 +16,17 @@ class DataProcessor:
     def convert_example_to_features(self, example):
         features = dict()
         features["input"] = []
-        features["label"] = -1 
-        golden_label = example["my_label"].split("_")[-1]
-        all_concepts = set()
-        for path in example["label"]:
-            for label in path:
-                concept = label.split("_")[-1]
-                all_concepts.add(concept)
-        all_concepts = list(all_concepts)
+        features["label"] = -1
+        if example["label"] != -1:
+            golden_label = example["label"].split("_")[-1]
+        else:
+            golden_label = -1
+        all_concepts = example["candidates"]
         for i, concept in enumerate(all_concepts):
             instance = self.add_template(example["sentence"], example["entity"]["name"], concept)
             features["input"].append(self.tokenizer.tokenize(instance))
             if concept == golden_label:
                 features["label"] = i
-        assert features["label"] in list(range(0, len(all_concepts)))
         return features
 
     
@@ -100,15 +84,6 @@ class BartProcessor(DataProcessor):
             final_inputs.append(instance)
         features["input"] = final_inputs
         return features
-
-
-class T5Processor(DataProcessor):
-    def __init__(self, tokenizer) -> None:
-        super().__init__(tokenizer)
-        self.tokenizer = tokenizer
-    
-    def convert_example_to_features(self, example, special_token="<CV>"):
-        pass 
 
 
 

@@ -33,15 +33,9 @@ def readExamplesForES(input_file):
     data = json.load(open(input_file))
     for item in data:
         query = item["query"]["name"]
-        pos = item["y"]["name"]
-        text = f"{query}\t{pos}"
-        examples.append(
-          InputExample(unique_id, text)
-        )
-        unique_id += 1
-        for neg in item["n"]:
-            neg = neg["name"]
-            text = f"{query}\t{neg}"
+        for candidate in item["candidates"]:
+            candidate = candidate["name"]
+            text = f"{query}\t{candidate}"
             examples.append(
               InputExample(unique_id, text)
             )
@@ -83,11 +77,6 @@ def encodeTextWithTemplateForES(example, args, tokenizer):
     e2_mask_left, e2_mask_right = _tokenize(candi_entity, "e2", tokenized_tokens, tokenized_token_markers)
     # after
     _tokenize(text_after_E2, "#", tokenized_tokens, tokenized_token_markers)
-    # # append position for [mask]
-    # mask_left = len(tokenized_tokens)
-    # _tokenize("Yes", "answer", tokenized_tokens, tokenized_token_markers)
-    # mask_right = len(tokenized_tokens)
-    # _tokenize(".", "#", tokenized_tokens, tokenized_token_markers)
     # end
     if args.mask_position == "e1":
         mask_left = e1_mask_left 

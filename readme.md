@@ -10,15 +10,15 @@ the necessary dependcies.
 `pip install -r requirements.txt`
 
 ## Download Datasets
-The COPEN benchmark is placed on [Tsinghua Cloud](https://cloud.tsinghua.edu.cn/f/b22c43b6b290460d9d12/?dl=1), please use the following command to download the datasets and place them
+The COPEN benchmark is placed on [Tsinghua Cloud](https://cloud.tsinghua.edu.cn/f/f0b33fb429fa4575aa7f/?dl=1), please use the following command to download the datasets and place them
 in the propor path.
 ```shell
 cd data/
-wget --content-disposition https://cloud.tsinghua.edu.cn/f/b22c43b6b290460d9d12/?dl=1
-unzip datav3.zip 
-mv datav3/task1/ task1/data
-mv datav3/task2/ task2/data
-mv datav3/task3/ task3/data 
+wget --content-disposition https://cloud.tsinghua.edu.cn/f/f0b33fb429fa4575aa7f/?dl=1
+unzip copen_data.zip 
+mv copen_data/task1/ task1/data
+mv copen_data/task2/ task2/data
+mv copen_data/task3/ task3/data 
 ```
 
 ## Pre-processing Datasets

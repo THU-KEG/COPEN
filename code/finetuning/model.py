@@ -176,15 +176,17 @@ class BertForMultipleChoice(BertForMultipleChoice):
         input_ids,
         attention_mask,
         choice_mask,
-        labels
+        labels=None
     ):
         outputs = super().forward(
             input_ids=input_ids,
             attention_mask=attention_mask
         )
         logits = outputs.logits + (1 - choice_mask) * -LARGE_NUM
-        loss_fct = nn.CrossEntropyLoss()
-        loss = loss_fct(logits, labels)
+        loss = None
+        if labels is not None:
+            loss_fct = nn.CrossEntropyLoss()
+            loss = loss_fct(logits, labels)
         return dict(
             loss=loss,
             logits=logits
@@ -214,15 +216,17 @@ class RobertaForMultipleChoice(RobertaForMultipleChoice):
         input_ids,
         attention_mask,
         choice_mask,
-        labels
+        labels=None
     ):
         outputs = super().forward(
             input_ids=input_ids,
             attention_mask=attention_mask
         )
         logits = outputs.logits + (1 - choice_mask) * -LARGE_NUM
-        loss_fct = nn.CrossEntropyLoss()
-        loss = loss_fct(logits, labels)
+        loss = None
+        if labels is not None:
+            loss_fct = nn.CrossEntropyLoss()
+            loss = loss_fct(logits, labels)
         return dict(
             loss=loss,
             logits=logits
@@ -240,7 +244,7 @@ class GPT2ForMultipleChoice(GPT2DoubleHeadsModel):
         attention_mask,
         choice_mask,
         mc_token_ids,
-        labels
+        labels=None
     ):
         outputs = super().forward(
             input_ids=input_ids,
@@ -248,8 +252,10 @@ class GPT2ForMultipleChoice(GPT2DoubleHeadsModel):
             mc_token_ids=mc_token_ids,
         )
         mc_logits = outputs.mc_logits + (1 - choice_mask) * -LARGE_NUM
-        loss_fct = nn.CrossEntropyLoss()
-        mc_loss = loss_fct(mc_logits.view(-1, mc_logits.size(-1)), labels.view(-1))
+        mc_loss = None
+        if labels is not None:
+            loss_fct = nn.CrossEntropyLoss()
+            mc_loss = loss_fct(mc_logits.view(-1, mc_logits.size(-1)), labels.view(-1))
         return dict(
             loss=mc_loss,
             logits=mc_logits
@@ -266,7 +272,7 @@ class GPTNeoForMultipleChoice(GPTNeoForSequenceClassification):
         input_ids, 
         attention_mask,
         choice_mask,
-        labels
+        labels=None
     ):
         num_choices = input_ids.shape[1]
         input_ids = input_ids.view(-1, input_ids.size(-1))
@@ -277,8 +283,10 @@ class GPTNeoForMultipleChoice(GPTNeoForSequenceClassification):
         )
         reshaped_logits = outputs.logits.view(-1, num_choices)
         reshaped_logits = reshaped_logits + (1 - choice_mask) * -LARGE_NUM
-        loss_fct = nn.CrossEntropyLoss()
-        loss = loss_fct(reshaped_logits, labels)
+        loss = None
+        if labels is not None:
+            loss_fct = nn.CrossEntropyLoss()
+            loss = loss_fct(reshaped_logits, labels)
         return dict(
             loss=loss,
             logits=reshaped_logits
@@ -295,7 +303,7 @@ class BartForMultipleChoice(BartForSequenceClassification):
         input_ids,
         attention_mask,
         choice_mask,
-        labels
+        labels=None
     ):
         num_choices = input_ids.shape[1]
         input_ids = input_ids.view(-1, input_ids.size(-1))
@@ -306,8 +314,10 @@ class BartForMultipleChoice(BartForSequenceClassification):
         )
         reshaped_logits = outputs.logits.view(-1, num_choices)
         reshaped_logits = reshaped_logits + (1 - choice_mask) * -LARGE_NUM
-        loss_fct = nn.CrossEntropyLoss()
-        loss = loss_fct(reshaped_logits, labels)
+        loss = None
+        if labels is not None:
+            loss_fct = nn.CrossEntropyLoss()
+            loss = loss_fct(reshaped_logits, labels)
         return dict(
             loss=loss,
             logits=reshaped_logits
@@ -517,7 +527,7 @@ def get_model(args, model_type, model_name_or_path, tokenizer_name, new_tokens:l
         raise ValueError("No such task.")
     if args.freeze_backbone_parameters:
         freeze_backbone_parameters(args, model, config)
-    return model, tokenizer, config 
+    return model, tokenizer, config
 
 
 

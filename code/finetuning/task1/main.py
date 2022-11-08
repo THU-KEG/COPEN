@@ -2,6 +2,8 @@ import os
 import sys
 sys.path.append("..")
 sys.path.append("../..")
+import json
+import numpy as np
 
 import torch
 from torch.utils.tensorboard import SummaryWriter
@@ -14,7 +16,7 @@ from cp_arguments import CPArgumentParser, CPArgs
 from model import get_model
 from data_processor import DatasetForMultipleChoice, DatasetforQuestionAnswering
 from metrics import compute_accuracy, compute_accuracy_for_qa
-from utils import dump_result, set_seed
+from utils import dump_result, set_seed, get_submissions
 
 # argument parser
 parser = CPArgumentParser(CPArgs, description="Concept Probing")
@@ -77,8 +79,16 @@ if args.do_predict:
     preds, labels, metrics = trainer.predict(
         test_dataset = test_dataset
     )
-    writer.add_scalar(tag="test_accuracy", scalar_value=metrics["test_accuracy"])
+    # writer.add_scalar(tag="test_accuracy", scalar_value=metrics["test_accuracy"])
     print(metrics)
 
-# write to result file 
-dump_result(args, model_name_or_path, metrics)
+    # write to result file 
+    dump_result(args, model_name_or_path, metrics)
+
+    # get submissions to codalab
+    all_data = json.load(open("../../../data/task1/data/ood/test.json"))
+    predictions = []
+    for pred, item in zip(preds, all_data):
+        predictions.append(item["candidates"][int(np.argmax(pred))]["id"])
+    save_path = os.path.join(args.output_dir, "csj_submissions.json")
+    get_submissions(all_data, predictions, save_path)

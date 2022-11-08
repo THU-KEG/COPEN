@@ -361,10 +361,10 @@ if __name__ == "__main__":
         os.mkdir("results")
     merge_result()
     merge_probing()
-    # merge_finetuning()
+    merge_finetuning()
     merge_main()
-    # merge_iid()
-    # merge_lexical_overlap()
+    merge_iid()
+    merge_lexical_overlap()
 
 
 

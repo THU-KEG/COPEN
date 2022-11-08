@@ -38,39 +38,5 @@ def compute_accuracy_for_qa(eval_pred):
     return {"accuracy": accuracy}
 
 
-def compute_consistency(data):
-    chains = defaultdict(list)
-    for item in data:
-        if "chain_id" in item:
-            chains[item["chain_id"]].append(item)
-    metrics = {}
-    for chain_id, chain in chains.items():
-        if len(chain) == 1:
-            continue
-
-        chain_length = len(chain)
-        if chain_length not in metrics:
-            metrics[chain_length] = {"num_chains": 0, "consist_correct": 0, "consistency": 0}
-
-        metrics[chain_length]["num_chains"] += 1
-        consistent = True
-        for item in chain:
-            if item["label"] != item["pred"]:
-                consistent = False
-                break 
-        if consistent:
-            metrics[chain_length]["consist_correct"] += 1
-    total_chains, total_correct = 0, 0
-    for key in metrics:
-        metrics[key]["consistency"] = metrics[key]["consist_correct"] / metrics[key]["num_chains"]
-        total_chains += metrics[key]["num_chains"]
-        total_correct += metrics[key]["consist_correct"]
-    metrics["overall"] = {}
-    metrics["overall"]["num_chains"] = total_chains
-    metrics["overall"]["consist_correct"] = total_correct
-    metrics["overall"]["consistency"] = total_correct / total_chains
-    return metrics
-
-
 
 

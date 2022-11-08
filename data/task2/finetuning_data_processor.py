@@ -1,14 +1,4 @@
 
-import os
-import pdb 
-import json
-
-from pathlib import Path 
-from tqdm import tqdm 
-
-from transformers import BertTokenizer, RobertaTokenizer, \
-                    GPT2Tokenizer, BartTokenizer, T5Tokenizer
-
 class DataProcessor:
     def __init__(self, tokenizer) -> None:
         self.tokenizer = tokenizer
@@ -24,9 +14,6 @@ class DataProcessor:
         features = dict()
         features["input"] = self.tokenizer.tokenize(example["text"])
         features["label"] = example["label"] 
-        if features["label"] not in [0, 1]:
-            features["label"] = 0
-            print(example)
         return features
 
     
@@ -85,7 +72,13 @@ class T5Processor(DataProcessor):
         features = dict()
         input_text = self.prefix + example["text"]
         features["input"] = self.tokenizer.tokenize(input_text) + [self.tokenizer.eos_token]
-        features["label"] = "true" if example["label"] else "false"
+        features["label"] = ""
+        if example["label"] == 1:
+            features["label"] = "true" 
+        elif example["label"] == 0:
+            features["label"] = "false"
+        else:
+            pass # test dataset
         features["label"] = self.tokenizer.tokenize(features["label"]) + [self.tokenizer.eos_token]
         return features
 

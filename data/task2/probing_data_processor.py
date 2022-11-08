@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.append("..")
 import pdb
+import copy 
 import json
 import argparse
 from argparse import Namespace
@@ -15,10 +16,11 @@ from processor_utils import convertExamplesToFeatures
 
 
 class InputExample(object):
-    def __init__(self, unique_id, tokens, con_pos):
+    def __init__(self, unique_id, tokens, con_pos, answer_pos):
         self.unique_id = unique_id
         self.tokens = tokens 
         self.con_pos = con_pos
+        self.answer_pos = answer_pos 
 
 
 def readExamplesForSC(input_file):
@@ -26,19 +28,25 @@ def readExamplesForSC(input_file):
     examples = []
     unique_id = 0
     data = json.load(open(input_file))
+    template = "The statement is".split()
     for item in data:
         tokens = item["text"].split()
-        con_pos = item["pos"]
-        examples.append(
-            InputExample(unique_id, tokens, con_pos)
-        )
-        unique_id += 1
+        con_pos = item["concept"]["pos"]
+        for answer in ["true", "false"]:
+            all_tokens = copy.deepcopy(tokens) + template 
+            answer_pos = [len(all_tokens), len(all_tokens)+1]
+            all_tokens.append(answer)
+            all_tokens.append(".")
+            examples.append(
+                InputExample(unique_id, all_tokens, con_pos, answer_pos)
+            )
+            unique_id += 1
     return examples
 
 
 def encodeTextWithTemplateForSC(example, args, tokenizer):
     """Returns entity_positions and tokens."""
-    tokens, con_pos = example.tokens, example.con_pos
+    tokens, con_pos, answer_pos = example.tokens, example.con_pos, example.answer_pos
     tokenized_token_markers = ["begin"]
     if args.model_type in ["bert"]:
         tokenized_tokens = [tokenizer.cls_token]
@@ -48,28 +56,15 @@ def encodeTextWithTemplateForSC(example, args, tokenizer):
         tokenized_tokens = []
         tokenized_token_markers = []
     mask_left, mask_right = -1, -1
-    # append position for [mask]
-    def _tokenize(text, marker, tokenized_tokens, tokenized_token_markers):
-        _tokens = tokenizer.tokenize(text)
-        tokenized_tokens.extend(_tokens)
-        tokenized_token_markers.extend([marker for _ in range(len(_tokens))])
-    # _tokenize("Verify the statement:", "#", tokenized_tokens, tokenized_token_markers)
     for i, token in enumerate(tokens):
         _tokens = tokenizer.tokenize(token)
-        # if i == con_pos[0]:
-        #     mask_left = len(tokenized_tokens)
         tokenized_tokens.extend(_tokens)
-        # if i == con_pos[1] - 1:
-        #     mask_right = len(tokenized_tokens)
         if i >= con_pos[0] and i < con_pos[1]:
             tokenized_token_markers.extend(['concept']*len(_tokens))
+        elif i >= answer_pos[0] and i< answer_pos[1]:
+            tokenized_token_markers.extend(['answer']*len(_tokens))
         else:
             tokenized_token_markers.extend(['#']*len(_tokens))
-    _tokenize("The statement is ", "#", tokenized_tokens, tokenized_token_markers)
-    mask_left = len(tokenized_tokens)
-    _tokenize("true", "answer", tokenized_tokens, tokenized_token_markers)
-    mask_right = len(tokenized_tokens)
-    _tokenize(".", "#", tokenized_tokens, tokenized_token_markers)
     # end 
     if args.model_type in ["bert"]:
         tokenized_tokens.append(tokenizer.sep_token)
@@ -77,7 +72,7 @@ def encodeTextWithTemplateForSC(example, args, tokenizer):
         tokenized_tokens.append(tokenizer.eos_token)
     tokenized_token_markers.append("end")
     assert len(tokenized_tokens) == len(tokenized_token_markers)
-    assert mask_left != -1 and mask_right != -1
+    # assert mask_left != -1 and mask_right != -1
 
     return tokenized_tokens, tokenized_token_markers, mask_left, mask_right
 
@@ -100,8 +95,6 @@ def process_data(args, tokenizer):
         json.dump(all_token_markers, f)
             
 
-
-
 if __name__ == "__main__":
     model_types = [
         ["bert", "bert-base-uncased"],
@@ -116,7 +109,9 @@ if __name__ == "__main__":
             tokenizer = BertTokenizer.from_pretrained(model_type[1])
         elif model_type[0] == "roberta":
             tokenizer = RobertaTokenizer.from_pretrained(model_type[1])
-        elif model_type[0] in ["gpt2", "gpt_neo"]:
+        elif model_type[0] == "gpt2":
+            tokenizer = GPT2Tokenizer.from_pretrained(model_type[1])
+        elif model_type[0] == "gpt_neo":
             tokenizer = GPT2Tokenizer.from_pretrained(model_type[1])
         elif model_type[0] == "bart":
             tokenizer = BartTokenizer.from_pretrained(model_type[1])
@@ -125,11 +120,11 @@ if __name__ == "__main__":
         else:
             raise ValueError
         for template in ["template1"]:
-            for mask_position in ["answer"]:
+            for mask_position in ["all"]:
                 params = {
                     "model_type": model_type[0],
                     "model_name_or_path": model_type[1],
-                    "input_file": os.path.join("data/ood", "test.json"),
+                    "input_file": os.path.join(os.path.join("data", "ood"), "test.json"),
                     "output_dir": os.path.join(os.path.join(os.path.join(os.path.join("data", "probing"), model_type[0]), template)),
                     "mask_position": mask_position,
                     "max_seq_length": 120

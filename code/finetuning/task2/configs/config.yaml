@@ -3,7 +3,7 @@ task_type: sc
 
 do_train: True
 do_predict: True
-pipeline: True 
+pipeline: False 
 
 num_train_epochs: 6
 max_seq_length: 80

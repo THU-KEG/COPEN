@@ -3,6 +3,7 @@ import pdb
 import sys
 sys.path.append("..")
 sys.path.append("../..")
+import json
 
 from torch.utils.tensorboard import SummaryWriter
 from transformers.integrations import TensorBoardCallback
@@ -13,7 +14,7 @@ from transformers import EarlyStoppingCallback
 from cp_arguments import CPArgumentParser, CPArgs
 from model import get_model
 from data_processor import DatasetforQuestionAnswering
-from utils import dump_result, set_seed
+from utils import dump_result, set_seed, get_submissions
 
 import numpy as np 
 
@@ -91,8 +92,21 @@ if args.do_predict:
     preds, labels, metrics = trainer.predict(
         test_dataset = test_dataset
     )
-    writer.add_scalar(tag="test_accuracy", scalar_value=metrics["test_accuracy"])
+    # writer.add_scalar(tag="test_accuracy", scalar_value=metrics["test_accuracy"])
     print(metrics)
 
-# write to result file 
-dump_result(args, model_name_or_path, metrics)
+    # write to result file 
+    dump_result(args, model_name_or_path, metrics)
+
+    # get submissions to codalab
+    all_data = json.load(open("../../../data/task3/data/ood/test.json"))
+    if isinstance(preds, tuple):
+        preds = preds[0]
+    decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
+    import string; id2char = string.ascii_uppercase
+    char2id = {char: id for id, char in enumerate(id2char)}
+    predictions = []
+    for pred, item in zip(decoded_preds, all_data):
+        predictions.append(item["candidates"][char2id[pred]])
+    save_path = os.path.join(args.output_dir, "cic_submissions.json")
+    get_submissions(all_data, decoded_preds, save_path)

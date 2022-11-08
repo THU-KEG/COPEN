@@ -1,9 +1,9 @@
 {
     "ood-FT_test_loss": 1.0983144044876099,
     "ood-FT": 66.79277007145859,
-    "ood-FT_test_runtime": 1.7274,
-    "ood-FT_test_samples_per_second": 2754.491,
-    "ood-FT_test_steps_per_second": 86.259,
+    "ood-FT_test_runtime": 1.6331,
+    "ood-FT_test_samples_per_second": 2913.474,
+    "ood-FT_test_steps_per_second": 91.237,
     "ood-FT_Precision": 0.599640933572711,
     "ood-FT_recall": 0.8922528940338379,
     "ood-FT_f1": 0.7172512526843235,

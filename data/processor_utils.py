@@ -229,7 +229,7 @@ if __name__ == "__main__":
     ]
     for model_type in model_types:
         # for type in ["iid", "ood"]:
-        for type in ["iid"]:
+        for type in ["ood"]:
             for split in ["train", "dev", "test"]:
                 params = {
                     "task_name": task_name,

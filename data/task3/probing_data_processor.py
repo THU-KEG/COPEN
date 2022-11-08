@@ -39,7 +39,7 @@ def readExamplesForCiC(input_file):
         sub_pos = item["entity"]["pos"] 
         sub_token = " ".join([tokens[i] for i in range(sub_pos[0], sub_pos[1])])
         prompt = "Choose the concept that best fits the context for %s according to the context:" % item["entity"]["name"]
-        for path in item["label"]:
+        for path in item["concept_chains"]:
             for label in path:
                 label = label.split("_")[-1]
                 template = sub_token + (" is an " if isVowel(label) else " is a ")
