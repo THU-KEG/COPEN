@@ -12,6 +12,9 @@ a concept, PLMs need to judge whether the statement is true.
 
 Extensive experiments on different sizes and types of PLMs show that existing PLMs systematically lack conceptual knowledge and suffer from various spurious correlations. We believe this is a critical bottleneck for realizing human-like cognition in PLMs. More concept-aware objectives or architectures are needed to develop conceptual knowledgeable PLMs. 
 
+## Codalab
+To get the test results, you need to submit your results to [codalab](https://codalab.lisn.upsaclay.fr/competitions/8542).
+
 ## 1. Quick Start
 The code repository is based on `Pytorch` and `Transformers`. Please use the following command to install all 
 the necessary dependcies.
