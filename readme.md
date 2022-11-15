@@ -26,7 +26,10 @@ in the propor path.
 ```shell
 cd data/
 wget --content-disposition https://cloud.tsinghua.edu.cn/f/f0b33fb429fa4575aa7f/?dl=1
-unzip copen_data.zip 
+unzip copen_data.zip
+mkdir task1/data
+mkdir task2/data
+mkdir task3/data
 mv copen_data/task1/* task1/data
 mv copen_data/task2/* task2/data
 mv copen_data/task3/* task3/data 
@@ -39,7 +42,7 @@ cd task1
 python probing_data_processor.py
 cd ../
 cd task2
-python data_processor_for_ppl.py
+python probing_data_processor.py
 cd ../
 cd task3
 python probing_data_processor.py

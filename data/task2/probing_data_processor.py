@@ -124,7 +124,7 @@ if __name__ == "__main__":
                 params = {
                     "model_type": model_type[0],
                     "model_name_or_path": model_type[1],
-                    "input_file": os.path.join(os.path.join("data", "ood"), "test.json"),
+                    "input_file": os.path.join("data", "test.json"),
                     "output_dir": os.path.join(os.path.join(os.path.join(os.path.join("data", "probing"), model_type[0]), template)),
                     "mask_position": mask_position,
                     "max_seq_length": 120
