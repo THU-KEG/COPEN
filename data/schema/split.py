@@ -25,7 +25,7 @@ def parse_schema(file_path: str) -> Dict[str, str]:
 
 def split_top_concepts():
     # split schema to train/test
-    schema = parse_schema("/data/ph/Concept-Prompt/utils/wikidata-process-toolkits/data/ontology/father.txt")
+    schema = parse_schema("father.txt")
     top_concepts = []
     for con in schema.keys():
         if schema[con] == "Root":
