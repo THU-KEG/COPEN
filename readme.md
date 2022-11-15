@@ -1,5 +1,5 @@
 # COPEN
-Dataset and code for ``COPEN: Probing Conceptual Knowledge in Pre-trained Language Models''.
+Dataset and code for EMNLP 2022 paper [''COPEN: Probing Conceptual Knowledge in Pre-trained Language Models''](https://arxiv.org/abs/2211.04079).
 COPEN is a COnceptual knowledge Porobing bENchmark which aims to analyze the conceptual understanding capabilities of Pre-trained Language Models (PLMs).
 Specifically, COPEN consists of three tasks: 
 - Conceptual Similarity Judgment (CSJ). Given a query entity and several candidate entities, the CSJ task requires to 
@@ -78,4 +78,10 @@ bash ../run.sh 0 bert bert-base-uncased task3 mc 42
 ## 5. Cite
 If you use this code or benchmark, please cite us:
 ```
+@article{peng2022copen,
+  title={COPEN: Probing Conceptual Knowledge in Pre-trained Language Models},
+  author={Peng, Hao and Wang, Xiaozhi and Hu, Shengding and Jin, Hailong and Hou, Lei and Li, Juanzi and Liu, Zhiyuan and Liu, Qun},
+  journal={arXiv preprint arXiv:2211.04079},
+  year={2022}
+}
 ```
