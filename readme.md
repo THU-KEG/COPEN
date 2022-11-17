@@ -76,12 +76,12 @@ cd task3/
 bash ../run.sh 0 bert bert-base-uncased task3 mc 42
 ```
 ## 5. Cite
-If you use this code or benchmark, please cite us:
+If our codes or benchmark help you, please cite us:
 ```
-@article{peng2022copen,
+@inproceedings{peng2022copen,
   title={COPEN: Probing Conceptual Knowledge in Pre-trained Language Models},
   author={Peng, Hao and Wang, Xiaozhi and Hu, Shengding and Jin, Hailong and Hou, Lei and Li, Juanzi and Liu, Zhiyuan and Liu, Qun},
-  journal={arXiv preprint arXiv:2211.04079},
+  booktitle={Proceedings of EMNLP},
   year={2022}
 }
 ```
