@@ -1,6 +1,6 @@
 task_name: CiC
 
-test_file: ../../data/task3/data/ood/test.json
+test_file: ../../data/task3/data/test.json
 
 per_device_eval_batch_size: 8
 max_seq_length: 120
